@@ -4,7 +4,7 @@ from datetime import date, datetime
 from typing import Optional
 
 from sqlalchemy import func
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, joinedload, subqueryload
 
 from app.models.db_models import (
     Dentist,
@@ -162,7 +162,11 @@ def get_submission_by_uuid(db: Session, submission_uuid: str) -> Submission | No
 def list_submissions(db: Session, offset: int = 0, limit: int = 50) -> list[Submission]:
     return (
         db.query(Submission)
-        .options(joinedload(Submission.originator))
+        .options(
+            joinedload(Submission.originator),
+            subqueryload(Submission.orders),
+            subqueryload(Submission.uploaded_files),
+        )
         .order_by(Submission.created_at.desc())
         .offset(offset)
         .limit(limit)
