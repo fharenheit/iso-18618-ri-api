@@ -129,7 +129,7 @@
   <div class="tab-content" id="tab-files">
     {% if sub.uploaded_files %}
     <table>
-      <thead><tr><th>File Name</th><th>Type</th><th>Size</th><th>Description</th><th>Status</th></tr></thead>
+      <thead><tr><th>File Name</th><th>Type</th><th>Size</th><th>Description</th><th>Status</th><th></th></tr></thead>
       <tbody>
         {% for f in sub.uploaded_files %}
         <tr>
@@ -147,11 +147,34 @@
             {% if f.is_uploaded %}<span class="badge badge-uploaded">Uploaded</span>
             {% else %}<span class="badge badge-pending">Pending</span>{% endif %}
           </td>
+          <td>
+            {% if f.is_uploaded and f.file_name.lower().endswith('.stl') %}
+              <button class="btn-view-stl"
+                      onclick="openSTLViewer('/api/v1/submissions/{{ sub.submission_uuid }}/files/{{ f.file_name }}', '{{ f.file_name }}')">
+                3D View
+              </button>
+            {% endif %}
+          </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
     {% else %}<div class="empty">No files.</div>{% endif %}
+  </div>
+
+  <!-- STL 3D Viewer Modal -->
+  <div id="stl-modal" class="stl-modal" style="display:none;">
+    <div class="stl-modal-content">
+      <div class="stl-modal-header">
+        <span id="stl-modal-title">STL Viewer</span>
+        <div class="stl-modal-controls">
+          <button onclick="resetCamera()" class="btn-stl-ctrl" title="Reset view">Reset</button>
+          <button onclick="toggleWireframe()" class="btn-stl-ctrl" title="Toggle wireframe">Wire</button>
+          <button onclick="closeSTLViewer()" class="btn-stl-close">&times;</button>
+        </div>
+      </div>
+      <div id="stl-container"></div>
+    </div>
   </div>
 
   <!-- XML -->
@@ -163,7 +186,127 @@
 {% endblock %}
 
 {% block scripts %}
+<script type="importmap">
+{ "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { STLLoader } from 'three/addons/loaders/STLLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+let scene, camera, renderer, controls, mesh, animId;
+let wireframeOn = false;
+
+window.openSTLViewer = function(url, filename) {
+  document.getElementById('stl-modal').style.display = 'flex';
+  document.getElementById('stl-modal-title').textContent = filename;
+  initScene();
+  loadSTL(url);
+};
+
+window.closeSTLViewer = function() {
+  document.getElementById('stl-modal').style.display = 'none';
+  if (animId) cancelAnimationFrame(animId);
+  if (renderer) renderer.dispose();
+  const container = document.getElementById('stl-container');
+  container.innerHTML = '';
+};
+
+window.resetCamera = function() {
+  if (!mesh) return;
+  fitCamera(mesh);
+};
+
+window.toggleWireframe = function() {
+  if (!mesh) return;
+  wireframeOn = !wireframeOn;
+  mesh.material.wireframe = wireframeOn;
+};
+
+function initScene() {
+  const container = document.getElementById('stl-container');
+  container.innerHTML = '';
+
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x1e293b);
+
+  const w = container.clientWidth, h = container.clientHeight;
+  camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 10000);
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(w, h);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  container.appendChild(renderer.domElement);
+
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.1;
+
+  // Lights
+  scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  dirLight.position.set(1, 2, 3);
+  scene.add(dirLight);
+  const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
+  dirLight2.position.set(-2, -1, -1);
+  scene.add(dirLight2);
+
+  // Grid
+  const grid = new THREE.GridHelper(200, 40, 0x334155, 0x1e3a5f);
+  scene.add(grid);
+
+  function animate() {
+    animId = requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    const w = container.clientWidth, h = container.clientHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  });
+}
+
+function loadSTL(url) {
+  if (mesh) { scene.remove(mesh); mesh.geometry.dispose(); mesh.material.dispose(); }
+  const loader = new STLLoader();
+  loader.load(url, function(geometry) {
+    geometry.computeVertexNormals();
+    const material = new THREE.MeshPhongMaterial({
+      color: 0x7cb9e8,
+      specular: 0x333333,
+      shininess: 40,
+      flatShading: false,
+    });
+    mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+    fitCamera(mesh);
+    wireframeOn = false;
+  });
+}
+
+function fitCamera(object) {
+  const box = new THREE.Box3().setFromObject(object);
+  const center = box.getCenter(new THREE.Vector3());
+  const size = box.getSize(new THREE.Vector3()).length();
+
+  object.position.sub(center);
+  controls.target.set(0, 0, 0);
+
+  camera.position.set(size * 0.8, size * 0.6, size * 0.8);
+  camera.near = size * 0.001;
+  camera.far = size * 100;
+  camera.updateProjectionMatrix();
+  controls.update();
+}
+</script>
 <script>
+// Tab switching
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -171,6 +314,11 @@ document.querySelectorAll('.tab').forEach(tab => {
     tab.classList.add('active');
     document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
   });
+});
+
+// Close modal on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeSTLViewer();
 });
 </script>
 {% endblock %}
