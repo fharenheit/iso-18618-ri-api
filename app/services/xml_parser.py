@@ -1,3 +1,5 @@
+import logging
+
 from lxml import etree
 
 from app.models.schemas import (
@@ -11,24 +13,33 @@ from app.models.schemas import (
 )
 
 
+logger = logging.getLogger("ids.xml_parser")
+
+
 class IDSParseError(Exception):
     pass
 
 
 def parse_ids_xml(xml_bytes: bytes) -> dict:
     """Parse an IDS XML document and return structured data."""
+    logger.debug("Parsing IDS XML (%d bytes)", len(xml_bytes))
+
     try:
         root = etree.fromstring(xml_bytes)
     except etree.XMLSyntaxError as e:
+        logger.error("XML syntax error: %s", e)
         raise IDSParseError(f"Invalid XML: {e}")
 
     if root.tag != "IDS":
+        logger.error("Invalid root element: <%s>", root.tag)
         raise IDSParseError(f"Root element must be <IDS>, got <{root.tag}>")
 
     ids_version = root.get("IDSVersion")
     ids_uuid = root.get("IDSUUID")
     if not ids_version or not ids_uuid:
         raise IDSParseError("IDS root must have IDSVersion and IDSUUID attributes")
+
+    logger.info("Parsed IDS: version=%s, uuid=%s", ids_version, ids_uuid)
 
     result = {
         "ids_version": ids_version,
@@ -47,6 +58,7 @@ def parse_ids_xml(xml_bytes: bytes) -> dict:
             "uuid": notification.get("UUID", ""),
             "type": notification.get("Type", ""),
         }
+        logger.info("Parsed Notification: type=%s", notification.get("Type"))
 
     return result
 
@@ -57,6 +69,7 @@ def _parse_submission(elem) -> dict:
         "date_submitted": elem.get("DateUTCSubmitted", ""),
         "date_received": elem.get("DateUTCReceived", ""),
     }
+    logger.info("Parsing Submission: uuid=%s", sub["uuid"])
 
     originator = elem.find("Originator")
     if originator is not None:
@@ -68,6 +81,10 @@ def _parse_submission(elem) -> dict:
         sub["dentists"] = _parse_dentists(catalogs.find("DentistCatalog"))
         sub["orders"] = _parse_orders(catalogs.find("OrderCatalog"))
         sub["files"] = _parse_files(catalogs.find("FileCatalog"))
+        logger.info(
+            "Catalogs: patients=%d, dentists=%d, orders=%d, files=%d",
+            len(sub["patients"]), len(sub["dentists"]), len(sub["orders"]), len(sub["files"]),
+        )
 
     return sub
 

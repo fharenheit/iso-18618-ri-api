@@ -15,3 +15,8 @@ storage:
 upload:
   max_xml_size_mb: 2
   max_file_size_mb: 100
+
+logging:
+  level: "INFO"              # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s [%(levelname)s] %(name)s - %(message)s"
+  sqlalchemy_level: "WARNING"  # DB query logging level
