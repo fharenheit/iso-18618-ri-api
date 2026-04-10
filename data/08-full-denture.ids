@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<IDS IDSVersion="2.0" IDSUUID="a1b2c3d4-e5f6-7890-abcd-ef1234567808">
+  <IDSSource
+    HostName="denture-lab-main"
+    IPAddress="10.20.30.40"
+    ApplicationName="DenturePro3D"
+    SystemName="FullDentureFlow"
+    SystemVersion="2.4.0" />
+  <Submission UUID="88888888-8888-8888-8888-888888888808" DateUTCSubmitted="2026-04-07T10:00:00Z">
+    <Originator UUID="00000008-0008-0008-0008-000000000008" Name="Yongsan Senior Dental" BusinessType="DOC">
+      <Address Street1="22 Hangang-daero" City="Seoul" State="Seoul" PostalCode="04378" Country="KOR" />
+    </Originator>
+    <Catalogs>
+      <PatientCatalog>
+        <Patient UUID="p0000008-0008-0008-0008-000000000008" FirstName="Okja" LastName="Noh" DateOfBirth="1945-09-20" Gender="F" />
+      </PatientCatalog>
+      <DentistCatalog>
+        <Dentist UUID="d0000008-0008-0008-0008-000000000008" FirstName="Byeongjin" LastName="Seo" LicenseNumber="DEN-1998-0455" />
+      </DentistCatalog>
+      <OrderCatalog>
+        <!-- Upper complete denture -->
+        <Order UUID="o0000008-0008-0008-0008-000000000001"
+               PatientUUID="p0000008-0008-0008-0008-000000000008"
+               DentistUUID="d0000008-0008-0008-0008-000000000008"
+               DateUTCCreated="2026-04-07T09:30:00Z"
+               Priority="Normal">
+          <Restoration UUID="r0000008-0008-0008-0008-000000000001"
+                       ToothNumber=""
+                       Type="CompleteDenture"
+                       Material="PMMA"
+                       Shade="A3">
+            <DesignRequirements>
+              <Arch>Upper</Arch>
+              <TeethMould>Square Ovoid</TeethMould>
+              <BaseColor>Pink Medium</BaseColor>
+              <OcclusionScheme>Lingualized</OcclusionScheme>
+            </DesignRequirements>
+          </Restoration>
+          <DeliveryRequest DateUTCRequested="2026-04-21T09:00:00Z" DeliveryMethod="Physical" />
+        </Order>
+        <!-- Lower complete denture -->
+        <Order UUID="o0000008-0008-0008-0008-000000000002"
+               PatientUUID="p0000008-0008-0008-0008-000000000008"
+               DentistUUID="d0000008-0008-0008-0008-000000000008"
+               DateUTCCreated="2026-04-07T09:30:00Z"
+               Priority="Normal">
+          <Restoration UUID="r0000008-0008-0008-0008-000000000002"
+                       ToothNumber=""
+                       Type="CompleteDenture"
+                       Material="PMMA"
+                       Shade="A3">
+            <DesignRequirements>
+              <Arch>Lower</Arch>
+              <TeethMould>Square Ovoid</TeethMould>
+              <BaseColor>Pink Medium</BaseColor>
+              <OcclusionScheme>Lingualized</OcclusionScheme>
+            </DesignRequirements>
+          </Restoration>
+          <DeliveryRequest DateUTCRequested="2026-04-21T09:00:00Z" DeliveryMethod="Physical" />
+        </Order>
+      </OrderCatalog>
+      <FileCatalog>
+        <IDSFile UUID="f0000008-0008-0008-0008-000000000001" FileName="upper_edentulous_ridge.stl" FileType="STL" FileSize="4200000" Description="Upper edentulous ridge scan" />
+        <IDSFile UUID="f0000008-0008-0008-0008-000000000002" FileName="lower_edentulous_ridge.stl" FileType="STL" FileSize="4100000" Description="Lower edentulous ridge scan" />
+        <IDSFile UUID="f0000008-0008-0008-0008-000000000003" FileName="jaw_relation_record.stl" FileType="STL" FileSize="1800000" Description="Jaw relation record" />
+        <IDSFile UUID="f0000008-0008-0008-0008-000000000004" FileName="facebow_record.pdf" FileType="PDF" FileSize="500000" Description="Facebow transfer record" />
+      </FileCatalog>
+    </Catalogs>
+  </Submission>
+</IDS>

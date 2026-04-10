@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<IDS IDSVersion="2.0" IDSUUID="a1b2c3d4-e5f6-7890-abcd-ef1234567802">
+  <IDSSource
+    HostName="clinic-workstation-02"
+    IPAddress="10.0.0.52"
+    ApplicationName="DentaScan 3D"
+    SystemName="ClinicSuite"
+    SystemVersion="3.8.0" />
+  <IDSReplies>
+    <ReplyTo Address="https://clinic02.dental.example.com/ids" AddressType="URL" />
+  </IDSReplies>
+  <Submission UUID="22222222-2222-2222-2222-222222222202" DateUTCSubmitted="2026-04-02T10:15:00Z">
+    <Originator UUID="00000002-0002-0002-0002-000000000002" Name="Gangnam Smile Dental" BusinessType="DOC">
+      <Address Street1="456 Teheran-ro" City="Seoul" State="Seoul" PostalCode="06150" Country="KOR" />
+      <BillingAddress Street1="456 Teheran-ro" City="Seoul" State="Seoul" PostalCode="06150" Country="KOR" />
+    </Originator>
+    <Catalogs>
+      <PatientCatalog>
+        <Patient UUID="p0000002-0002-0002-0002-000000000002" FirstName="Jiyeon" LastName="Lee" DateOfBirth="1978-11-22" Gender="F" />
+      </PatientCatalog>
+      <DentistCatalog>
+        <Dentist UUID="d0000002-0002-0002-0002-000000000002" FirstName="Junhyeok" LastName="Choi" LicenseNumber="DEN-2005-3342" />
+      </DentistCatalog>
+      <OrderCatalog>
+        <Order UUID="o0000002-0002-0002-0002-000000000002"
+               PatientUUID="p0000002-0002-0002-0002-000000000002"
+               DentistUUID="d0000002-0002-0002-0002-000000000002"
+               DateUTCCreated="2026-04-02T10:00:00Z"
+               Priority="High">
+          <!-- Abutment tooth #35 -->
+          <Restoration UUID="r0000002-0002-0002-0002-000000000001"
+                       ToothNumber="35"
+                       Type="BridgeAbutment"
+                       Material="Zirconia"
+                       Shade="A3">
+            <DesignRequirements>
+              <MarginType>DeepChamfer</MarginType>
+              <CementGap>0.03</CementGap>
+            </DesignRequirements>
+          </Restoration>
+          <!-- Pontic tooth #36 -->
+          <Restoration UUID="r0000002-0002-0002-0002-000000000002"
+                       ToothNumber="36"
+                       Type="BridgePontic"
+                       Material="Zirconia"
+                       Shade="A3">
+            <DesignRequirements>
+              <PonticDesign>Modified Ridge Lap</PonticDesign>
+            </DesignRequirements>
+          </Restoration>
+          <!-- Abutment tooth #37 -->
+          <Restoration UUID="r0000002-0002-0002-0002-000000000003"
+                       ToothNumber="37"
+                       Type="BridgeAbutment"
+                       Material="Zirconia"
+                       Shade="A3">
+            <DesignRequirements>
+              <MarginType>DeepChamfer</MarginType>
+              <CementGap>0.03</CementGap>
+            </DesignRequirements>
+          </Restoration>
+          <DeliveryRequest DateUTCRequested="2026-04-12T09:00:00Z" DeliveryMethod="Physical" />
+          <OrderExtraInfo>
+            <LabNotes>Patient has limited opening. Please ensure adequate occlusal clearance.</LabNotes>
+          </OrderExtraInfo>
+        </Order>
+      </OrderCatalog>
+      <FileCatalog>
+        <IDSFile UUID="f0000002-0002-0002-0002-000000000001"
+                 FileName="mandible_prep_scan.stl"
+                 FileType="STL"
+                 FileSize="5100000"
+                 Description="Mandibular arch preparation scan" />
+        <IDSFile UUID="f0000002-0002-0002-0002-000000000002"
+                 FileName="maxilla_opposing.stl"
+                 FileType="STL"
+                 FileSize="4800000"
+                 Description="Maxillary opposing arch scan" />
+      </FileCatalog>
+      <IDMapCatalog>
+        <IDMapItem UUID="o0000002-0002-0002-0002-000000000002" AlternateID="CASE-BR-20260402" Source="ClinicSuite" />
+      </IDMapCatalog>
+    </Catalogs>
+  </Submission>
+</IDS>

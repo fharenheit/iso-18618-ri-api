@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<IDS IDSVersion="2.0" IDSUUID="a1b2c3d4-e5f6-7890-abcd-ef1234567804">
+  <IDSSource
+    HostName="cosmetic-dental-ws"
+    IPAddress="192.168.10.25"
+    ApplicationName="AestheticCAD"
+    SystemName="CosmeticPlanner"
+    SystemVersion="4.0.2" />
+  <Submission UUID="44444444-4444-4444-4444-444444444404" DateUTCSubmitted="2026-04-04T11:00:00Z">
+    <Originator UUID="00000004-0004-0004-0004-000000000004" Name="Apgujeong Aesthetic Dental" BusinessType="DOC">
+      <Address Street1="12 Apgujeong-ro 50-gil" City="Seoul" State="Seoul" PostalCode="06010" Country="KOR" />
+    </Originator>
+    <Catalogs>
+      <PatientCatalog>
+        <Patient UUID="p0000004-0004-0004-0004-000000000004" FirstName="Sooyeon" LastName="Jung" DateOfBirth="1992-01-30" Gender="F" />
+      </PatientCatalog>
+      <DentistCatalog>
+        <Dentist UUID="d0000004-0004-0004-0004-000000000004" FirstName="Taehyung" LastName="Yoon" LicenseNumber="DEN-2012-9901" />
+      </DentistCatalog>
+      <OrderCatalog>
+        <Order UUID="o0000004-0004-0004-0004-000000000004"
+               PatientUUID="p0000004-0004-0004-0004-000000000004"
+               DentistUUID="d0000004-0004-0004-0004-000000000004"
+               DateUTCCreated="2026-04-04T10:30:00Z"
+               Priority="Normal">
+          <Restoration UUID="r0000004-0004-0004-0004-000000000001" ToothNumber="11" Type="Veneer" Material="LithiumDisilicate" Shade="BL2" />
+          <Restoration UUID="r0000004-0004-0004-0004-000000000002" ToothNumber="12" Type="Veneer" Material="LithiumDisilicate" Shade="BL2" />
+          <Restoration UUID="r0000004-0004-0004-0004-000000000003" ToothNumber="13" Type="Veneer" Material="LithiumDisilicate" Shade="A1" />
+          <Restoration UUID="r0000004-0004-0004-0004-000000000004" ToothNumber="21" Type="Veneer" Material="LithiumDisilicate" Shade="BL2" />
+          <Restoration UUID="r0000004-0004-0004-0004-000000000005" ToothNumber="22" Type="Veneer" Material="LithiumDisilicate" Shade="BL2" />
+          <Restoration UUID="r0000004-0004-0004-0004-000000000006" ToothNumber="23" Type="Veneer" Material="LithiumDisilicate" Shade="A1" />
+          <DeliveryRequest DateUTCRequested="2026-04-18T09:00:00Z" DeliveryMethod="Physical" />
+          <OrderExtraInfo>
+            <LabNotes>Smile design case. Patient requests natural look. Photos attached for shade reference.</LabNotes>
+          </OrderExtraInfo>
+        </Order>
+      </OrderCatalog>
+      <FileCatalog>
+        <IDSFile UUID="f0000004-0004-0004-0004-000000000001" FileName="upper_prep_scan.stl" FileType="STL" FileSize="4900000" Description="Upper arch preparation scan" />
+        <IDSFile UUID="f0000004-0004-0004-0004-000000000002" FileName="lower_opposing.stl" FileType="STL" FileSize="4600000" Description="Lower opposing arch scan" />
+        <IDSFile UUID="f0000004-0004-0004-0004-000000000003" FileName="smile_photo_front.jpg" FileType="JPG" FileSize="2300000" Description="Front smile photo for shade reference" />
+        <IDSFile UUID="f0000004-0004-0004-0004-000000000004" FileName="smile_design_mockup.stl" FileType="STL" FileSize="3200000" Description="Digital smile design wax-up" />
+      </FileCatalog>
+    </Catalogs>
+  </Submission>
+</IDS>

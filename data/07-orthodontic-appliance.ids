@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<IDS IDSVersion="2.0" IDSUUID="a1b2c3d4-e5f6-7890-abcd-ef1234567807">
+  <IDSSource
+    HostName="ortho-center-server"
+    IPAddress="192.168.20.15"
+    ApplicationName="OrthoAligner"
+    SystemName="AlignerWorkflow"
+    SystemVersion="6.0.1" />
+  <IDSReplies>
+    <ReplyTo Address="https://ortho.dental.example.com/ids/callback" AddressType="URL" />
+  </IDSReplies>
+  <Submission UUID="77777777-7777-7777-7777-777777777707" DateUTCSubmitted="2026-04-06T09:30:00Z">
+    <Originator UUID="00000007-0007-0007-0007-000000000007" Name="Smile Orthodontic Clinic" BusinessType="DOC">
+      <Address Street1="88 Sinsa-dong" City="Seoul" State="Seoul" PostalCode="06025" Country="KOR" />
+    </Originator>
+    <Catalogs>
+      <PatientCatalog>
+        <Patient UUID="p0000007-0007-0007-0007-000000000007" FirstName="Yuna" LastName="Hwang" DateOfBirth="2001-04-17" Gender="F" />
+      </PatientCatalog>
+      <DentistCatalog>
+        <Dentist UUID="d0000007-0007-0007-0007-000000000007" FirstName="Sangwon" LastName="Lim" LicenseNumber="DEN-2009-6612">
+          <DentistExtraInfo>
+            <ClinicInfo>
+              <Specialty>Orthodontics</Specialty>
+            </ClinicInfo>
+          </DentistExtraInfo>
+        </Dentist>
+      </DentistCatalog>
+      <OrderCatalog>
+        <Order UUID="o0000007-0007-0007-0007-000000000007"
+               PatientUUID="p0000007-0007-0007-0007-000000000007"
+               DentistUUID="d0000007-0007-0007-0007-000000000007"
+               DateUTCCreated="2026-04-06T09:00:00Z"
+               Priority="Normal">
+          <Restoration UUID="r0000007-0007-0007-0007-000000000001"
+                       ToothNumber=""
+                       Type="OrthodonticAligner"
+                       Material="ClearResin"
+                       Shade="">
+            <DesignRequirements>
+              <AlignerStage>Stage 5 of 22</AlignerStage>
+              <UpperAligner>true</UpperAligner>
+              <LowerAligner>true</LowerAligner>
+              <Attachments>11,21,13,23,14,24</Attachments>
+              <IPR>None for this stage</IPR>
+            </DesignRequirements>
+          </Restoration>
+          <DeliveryRequest DateUTCRequested="2026-04-13T09:00:00Z" DeliveryMethod="Physical" />
+        </Order>
+      </OrderCatalog>
+      <CADDataCatalog>
+        <CADData UUID="c0000007-0007-0007-0007-000000000001"
+                 OrderUUID="o0000007-0007-0007-0007-000000000007"
+                 Type="IntraoralScan">
+          <ScanInfo>
+            <ScannerModel>iTero Element 5D</ScannerModel>
+            <ScanDate>2026-04-06T08:45:00Z</ScanDate>
+          </ScanInfo>
+        </CADData>
+      </CADDataCatalog>
+      <FileCatalog>
+        <IDSFile UUID="f0000007-0007-0007-0007-000000000001" FileName="upper_arch_stage5.stl" FileType="STL" FileSize="5200000" Description="Upper arch scan for aligner stage 5" />
+        <IDSFile UUID="f0000007-0007-0007-0007-000000000002" FileName="lower_arch_stage5.stl" FileType="STL" FileSize="5000000" Description="Lower arch scan for aligner stage 5" />
+        <IDSFile UUID="f0000007-0007-0007-0007-000000000003" FileName="treatment_plan.pdf" FileType="PDF" FileSize="850000" Description="Full orthodontic treatment plan" />
+      </FileCatalog>
+    </Catalogs>
+  </Submission>
+</IDS>

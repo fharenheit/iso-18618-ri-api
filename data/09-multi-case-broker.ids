@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<IDS IDSVersion="2.0" IDSUUID="a1b2c3d4-e5f6-7890-abcd-ef1234567809">
+  <IDSSource
+    HostName="broker-gateway-01"
+    IPAddress="203.0.113.50"
+    IPAddress6="2001:db8::1"
+    ApplicationName="DentalBrokerHub"
+    SystemName="BrokerGateway"
+    SystemVersion="7.1.0"
+    OperatorID="broker-admin"
+    NetworkDomain="dentalbroker.example.com" />
+  <IDSReplies>
+    <ReplyTo Address="https://broker.example.com/ids/v2/reply" AddressType="URL" />
+    <ReplyTo Address="192.168.100.1" AddressType="IPV4" />
+  </IDSReplies>
+  <Submission UUID="99999999-9999-9999-9999-999999999909" DateUTCSubmitted="2026-04-08T07:00:00Z">
+    <Originator UUID="00000009-0009-0009-0009-000000000009" Name="Korea Dental Broker Service" BusinessType="SRV">
+      <Address Street1="100 Digital-ro 26-gil" City="Seoul" State="Seoul" PostalCode="08390" Country="KOR" />
+      <BillingAddress Street1="100 Digital-ro 26-gil" City="Seoul" State="Seoul" PostalCode="08390" Country="KOR" />
+    </Originator>
+    <Catalogs>
+      <PatientCatalog>
+        <Patient UUID="p0000009-0009-0009-0009-000000000001" FirstName="Jihoon" LastName="Yang" DateOfBirth="1988-05-25" Gender="M" />
+        <Patient UUID="p0000009-0009-0009-0009-000000000002" FirstName="Areum" LastName="Moon" DateOfBirth="1990-10-11" Gender="F" />
+        <Patient UUID="p0000009-0009-0009-0009-000000000003" FirstName="Seungmin" LastName="Ryu" DateOfBirth="1982-02-14" Gender="M" />
+      </PatientCatalog>
+      <DentistCatalog>
+        <Dentist UUID="d0000009-0009-0009-0009-000000000001" FirstName="Woojin" LastName="Song" LicenseNumber="DEN-2015-4430" />
+        <Dentist UUID="d0000009-0009-0009-0009-000000000002" FirstName="Hyejin" LastName="Oh" LicenseNumber="DEN-2011-7788" />
+      </DentistCatalog>
+      <OrderCatalog>
+        <!-- Case 1: Crown for patient Yang -->
+        <Order UUID="o0000009-0009-0009-0009-000000000001"
+               PatientUUID="p0000009-0009-0009-0009-000000000001"
+               DentistUUID="d0000009-0009-0009-0009-000000000001"
+               DateUTCCreated="2026-04-07T15:00:00Z"
+               Priority="Normal">
+          <Restoration UUID="r0000009-0009-0009-0009-000000000001" ToothNumber="36" Type="Crown" Material="Zirconia" Shade="A3" />
+          <DeliveryRequest DateUTCRequested="2026-04-14T09:00:00Z" DeliveryMethod="Physical" />
+        </Order>
+        <!-- Case 2: Two crowns for patient Moon -->
+        <Order UUID="o0000009-0009-0009-0009-000000000002"
+               PatientUUID="p0000009-0009-0009-0009-000000000002"
+               DentistUUID="d0000009-0009-0009-0009-000000000002"
+               DateUTCCreated="2026-04-07T16:30:00Z"
+               Priority="High">
+          <Restoration UUID="r0000009-0009-0009-0009-000000000002" ToothNumber="14" Type="Crown" Material="EMax" Shade="A1" />
+          <Restoration UUID="r0000009-0009-0009-0009-000000000003" ToothNumber="15" Type="Crown" Material="EMax" Shade="A1" />
+          <DeliveryRequest DateUTCRequested="2026-04-11T09:00:00Z" DeliveryMethod="Physical" />
+        </Order>
+        <!-- Case 3: Implant crown for patient Ryu -->
+        <Order UUID="o0000009-0009-0009-0009-000000000003"
+               PatientUUID="p0000009-0009-0009-0009-000000000003"
+               DentistUUID="d0000009-0009-0009-0009-000000000001"
+               DateUTCCreated="2026-04-08T06:00:00Z"
+               Priority="Normal">
+          <Restoration UUID="r0000009-0009-0009-0009-000000000004" ToothNumber="46" Type="ImplantCrown" Material="ZirconiaLayered" Shade="B2">
+            <ImplantInfo>
+              <ImplantSystem>Osstem TS III</ImplantSystem>
+              <ImplantDiameter>4.0</ImplantDiameter>
+              <ImplantLength>11.5</ImplantLength>
+              <Platform>Regular</Platform>
+            </ImplantInfo>
+          </Restoration>
+          <DeliveryRequest DateUTCRequested="2026-04-22T09:00:00Z" DeliveryMethod="Physical" />
+        </Order>
+      </OrderCatalog>
+      <FileCatalog>
+        <IDSFile UUID="f0000009-0009-0009-0009-000000000001" FileName="yang_upper_scan.stl" FileType="STL" FileSize="4500000" Description="Yang - upper arch scan" />
+        <IDSFile UUID="f0000009-0009-0009-0009-000000000002" FileName="yang_lower_scan.stl" FileType="STL" FileSize="4400000" Description="Yang - lower arch scan" />
+        <IDSFile UUID="f0000009-0009-0009-0009-000000000003" FileName="moon_upper_scan.stl" FileType="STL" FileSize="4700000" Description="Moon - upper arch scan" />
+        <IDSFile UUID="f0000009-0009-0009-0009-000000000004" FileName="moon_lower_scan.stl" FileType="STL" FileSize="4600000" Description="Moon - lower arch scan" />
+        <IDSFile UUID="f0000009-0009-0009-0009-000000000005" FileName="ryu_implant_scan.stl" FileType="STL" FileSize="5300000" Description="Ryu - implant site scan with scan body" />
+      </FileCatalog>
+      <IDMapCatalog>
+        <IDMapItem UUID="o0000009-0009-0009-0009-000000000001" AlternateID="BRK-2026-0801" Source="BrokerGateway" />
+        <IDMapItem UUID="o0000009-0009-0009-0009-000000000002" AlternateID="BRK-2026-0802" Source="BrokerGateway" />
+        <IDMapItem UUID="o0000009-0009-0009-0009-000000000003" AlternateID="BRK-2026-0803" Source="BrokerGateway" />
+      </IDMapCatalog>
+    </Catalogs>
+  </Submission>
+</IDS>

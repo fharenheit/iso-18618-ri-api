@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<IDS IDSVersion="2.0" IDSUUID="a1b2c3d4-e5f6-7890-abcd-ef1234567805">
+  <IDSSource
+    HostName="chairside-mill-01"
+    IPAddress="192.168.5.80"
+    ApplicationName="ChairsideCAM"
+    SystemName="MillStation"
+    SystemVersion="1.5.3" />
+  <Submission UUID="55555555-5555-5555-5555-555555555505" DateUTCSubmitted="2026-04-05T08:45:00Z">
+    <Originator UUID="00000005-0005-0005-0005-000000000005" Name="Bundang Family Dental" BusinessType="DOC">
+      <Address Street1="33 Seongnam-daero 331beon-gil" City="Seongnam" State="Gyeonggi-do" PostalCode="13558" Country="KOR" />
+    </Originator>
+    <Catalogs>
+      <PatientCatalog>
+        <Patient UUID="p0000005-0005-0005-0005-000000000005" FirstName="Hyunwoo" LastName="Shin" DateOfBirth="1995-08-12" Gender="M" />
+      </PatientCatalog>
+      <DentistCatalog>
+        <Dentist UUID="d0000005-0005-0005-0005-000000000005" FirstName="Minji" LastName="Kang" LicenseNumber="DEN-2018-1145" />
+      </DentistCatalog>
+      <OrderCatalog>
+        <Order UUID="o0000005-0005-0005-0005-000000000005"
+               PatientUUID="p0000005-0005-0005-0005-000000000005"
+               DentistUUID="d0000005-0005-0005-0005-000000000005"
+               DateUTCCreated="2026-04-05T08:30:00Z"
+               Priority="Normal">
+          <Restoration UUID="r0000005-0005-0005-0005-000000000001"
+                       ToothNumber="26"
+                       Type="Inlay"
+                       Material="LithiumDisilicate"
+                       Shade="A2">
+            <DesignRequirements>
+              <OcclusalClearance>1.5</OcclusalClearance>
+              <CementGap>0.04</CementGap>
+              <CavityType>MOD</CavityType>
+            </DesignRequirements>
+          </Restoration>
+          <Restoration UUID="r0000005-0005-0005-0005-000000000002"
+                       ToothNumber="27"
+                       Type="Onlay"
+                       Material="LithiumDisilicate"
+                       Shade="A2">
+            <DesignRequirements>
+              <OcclusalClearance>2.0</OcclusalClearance>
+              <CementGap>0.04</CementGap>
+              <CavityType>MOD with buccal cusp coverage</CavityType>
+            </DesignRequirements>
+          </Restoration>
+          <DeliveryRequest DateUTCRequested="2026-04-05T16:00:00Z" DeliveryMethod="Chairside" />
+          <OrderExtraInfo>
+            <LabNotes>Same-day chairside milling. CEREC workflow.</LabNotes>
+          </OrderExtraInfo>
+        </Order>
+      </OrderCatalog>
+      <FileCatalog>
+        <IDSFile UUID="f0000005-0005-0005-0005-000000000001" FileName="quadrant_2_prep.stl" FileType="STL" FileSize="3200000" Description="Upper left quadrant preparation scan" />
+        <IDSFile UUID="f0000005-0005-0005-0005-000000000002" FileName="quadrant_2_opposing.stl" FileType="STL" FileSize="3100000" Description="Lower left quadrant opposing scan" />
+      </FileCatalog>
+    </Catalogs>
+  </Submission>
+</IDS>
