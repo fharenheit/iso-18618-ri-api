@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<IDS IDSVersion="2.0" IDSUUID="a1b2c3d4-e5f6-7890-abcd-ef1234567801">
+  <IDSSource
+    HostName="dental-lab-server-01"
+    IPAddress="192.168.1.100"
+    ApplicationName="DentalCAD Pro"
+    SystemName="LabManager"
+    SystemVersion="5.2.1" />
+  <IDSReplies>
+    <ReplyTo Address="https://lab.example.com/ids/reply" AddressType="URL" />
+  </IDSReplies>
+  <Submission UUID="11111111-1111-1111-1111-111111111101" DateUTCSubmitted="2026-04-01T09:00:00Z">
+    <Originator UUID="00000001-0001-0001-0001-000000000001" Name="Seoul Dental Clinic" BusinessType="DOC">
+      <Address Street1="123 Gangnam-daero" City="Seoul" State="Seoul" PostalCode="06100" Country="KOR" />
+    </Originator>
+    <Catalogs>
+      <PatientCatalog>
+        <Patient UUID="p0000001-0001-0001-0001-000000000001" FirstName="Minjun" LastName="Kim" DateOfBirth="1985-03-15" Gender="M" />
+      </PatientCatalog>
+      <DentistCatalog>
+        <Dentist UUID="d0000001-0001-0001-0001-000000000001" FirstName="Seonghwan" LastName="Park" LicenseNumber="DEN-2010-5521">
+          <DentistExtraInfo>
+            <ClinicInfo>
+              <Specialty>Prosthodontics</Specialty>
+            </ClinicInfo>
+          </DentistExtraInfo>
+        </Dentist>
+      </DentistCatalog>
+      <OrderCatalog>
+        <Order UUID="o0000001-0001-0001-0001-000000000001"
+               PatientUUID="p0000001-0001-0001-0001-000000000001"
+               DentistUUID="d0000001-0001-0001-0001-000000000001"
+               DateUTCCreated="2026-04-01T08:30:00Z"
+               Priority="Normal">
+          <Restoration UUID="r0000001-0001-0001-0001-000000000001"
+                       ToothNumber="16"
+                       Type="Crown"
+                       Material="Zirconia"
+                       Shade="A2">
+            <DesignRequirements>
+              <OcclusalClearance>1.5</OcclusalClearance>
+              <MarginType>Chamfer</MarginType>
+              <CementGap>0.04</CementGap>
+            </DesignRequirements>
+          </Restoration>
+          <DeliveryRequest DateUTCRequested="2026-04-08T09:00:00Z" DeliveryMethod="Physical" />
+        </Order>
+      </OrderCatalog>
+      <FileCatalog>
+        <IDSFile UUID="f0000001-0001-0001-0001-000000000001"
+                 FileName="upper_jaw_scan.stl"
+                 FileType="STL"
+                 FileSize="4521000"
+                 Description="Upper jaw intraoral scan" />
+        <IDSFile UUID="f0000001-0001-0001-0001-000000000002"
+                 FileName="lower_jaw_scan.stl"
+                 FileType="STL"
+                 FileSize="4320000"
+                 Description="Lower jaw intraoral scan" />
+        <IDSFile UUID="f0000001-0001-0001-0001-000000000003"
+                 FileName="bite_registration.stl"
+                 FileType="STL"
+                 FileSize="1250000"
+                 Description="Bite registration scan" />
+      </FileCatalog>
+      <IDMapCatalog>
+        <IDMapItem UUID="p0000001-0001-0001-0001-000000000001" AlternateID="PAT-20260401-001" Source="LabManager" />
+        <IDMapItem UUID="o0000001-0001-0001-0001-000000000001" AlternateID="ORD-20260401-001" Source="LabManager" />
+      </IDMapCatalog>
+    </Catalogs>
+  </Submission>
+</IDS>

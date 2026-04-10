@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<IDS IDSVersion="2.0" IDSUUID="a1b2c3d4-e5f6-7890-abcd-ef1234567803">
+  <IDSSource
+    HostName="implant-center-main"
+    IPAddress="172.16.0.10"
+    ApplicationName="ImplantDesigner"
+    SystemName="ImplantWorkflow"
+    SystemVersion="2.1.0" />
+  <Submission UUID="33333333-3333-3333-3333-333333333303" DateUTCSubmitted="2026-04-03T14:30:00Z">
+    <Originator UUID="00000003-0003-0003-0003-000000000003" Name="Korea Implant Center" BusinessType="DOC">
+      <Address Street1="789 Jongno-gu" City="Seoul" State="Seoul" PostalCode="03155" Country="KOR" />
+    </Originator>
+    <Catalogs>
+      <PatientCatalog>
+        <Patient UUID="p0000003-0003-0003-0003-000000000003" FirstName="Donghyun" LastName="Bae" DateOfBirth="1970-06-08" Gender="M" />
+      </PatientCatalog>
+      <DentistCatalog>
+        <Dentist UUID="d0000003-0003-0003-0003-000000000003" FirstName="Eunji" LastName="Han" LicenseNumber="DEN-2008-7789">
+          <DentistExtraInfo>
+            <ClinicInfo>
+              <Specialty>Oral Surgery / Implantology</Specialty>
+            </ClinicInfo>
+          </DentistExtraInfo>
+        </Dentist>
+      </DentistCatalog>
+      <OrderCatalog>
+        <Order UUID="o0000003-0003-0003-0003-000000000003"
+               PatientUUID="p0000003-0003-0003-0003-000000000003"
+               DentistUUID="d0000003-0003-0003-0003-000000000003"
+               DateUTCCreated="2026-04-03T14:00:00Z"
+               Priority="Normal">
+          <Restoration UUID="r0000003-0003-0003-0003-000000000001"
+                       ToothNumber="46"
+                       Type="ImplantCustomAbutment"
+                       Material="Titanium"
+                       Shade="">
+            <ImplantInfo>
+              <ImplantSystem>Straumann BLT</ImplantSystem>
+              <ImplantDiameter>4.1</ImplantDiameter>
+              <ImplantLength>10.0</ImplantLength>
+              <Platform>RC</Platform>
+              <ConnectionType>CrossFit</ConnectionType>
+            </ImplantInfo>
+            <DesignRequirements>
+              <EmergenceProfile>Natural</EmergenceProfile>
+              <AbutmentHeight>5.5</AbutmentHeight>
+              <MarginType>Chamfer</MarginType>
+            </DesignRequirements>
+          </Restoration>
+          <Restoration UUID="r0000003-0003-0003-0003-000000000002"
+                       ToothNumber="46"
+                       Type="ImplantCrown"
+                       Material="ZirconiaLayered"
+                       Shade="A3.5">
+            <DesignRequirements>
+              <OcclusalClearance>2.0</OcclusalClearance>
+              <CementGap>0.05</CementGap>
+              <ScrewAccess>Occlusal</ScrewAccess>
+            </DesignRequirements>
+          </Restoration>
+          <DeliveryRequest DateUTCRequested="2026-04-15T09:00:00Z" DeliveryMethod="Physical" />
+        </Order>
+      </OrderCatalog>
+      <CADDataCatalog>
+        <CADData UUID="c0000003-0003-0003-0003-000000000001"
+                 OrderUUID="o0000003-0003-0003-0003-000000000003"
+                 Type="IntraoralScan">
+          <ScanInfo>
+            <ScannerModel>3Shape TRIOS 4</ScannerModel>
+            <ScanDate>2026-04-03T13:45:00Z</ScanDate>
+          </ScanInfo>
+        </CADData>
+      </CADDataCatalog>
+      <FileCatalog>
+        <IDSFile UUID="f0000003-0003-0003-0003-000000000001"
+                 FileName="implant_site_scan.stl"
+                 FileType="STL"
+                 FileSize="5800000"
+                 Description="Implant site intraoral scan with scan body" />
+        <IDSFile UUID="f0000003-0003-0003-0003-000000000002"
+                 FileName="cbct_dicom.zip"
+                 FileType="ZIP"
+                 FileSize="52000000"
+                 Description="CBCT DICOM data for implant planning" />
+      </FileCatalog>
+      <IDMapCatalog>
+        <IDMapItem UUID="p0000003-0003-0003-0003-000000000003" AlternateID="IMP-PAT-0308" Source="ImplantWorkflow" />
+      </IDMapCatalog>
+    </Catalogs>
+  </Submission>
+</IDS>

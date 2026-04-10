@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<IDS IDSVersion="2.0" IDSUUID="a1b2c3d4-e5f6-7890-abcd-ef1234567806">
+  <IDSSource
+    HostName="prosth-lab-server"
+    IPAddress="10.10.1.50"
+    ApplicationName="DentureDesignPro"
+    SystemName="ProsthLab"
+    SystemVersion="3.2.0" />
+  <Submission UUID="66666666-6666-6666-6666-666666666606" DateUTCSubmitted="2026-04-05T13:00:00Z">
+    <Originator UUID="00000006-0006-0006-0006-000000000006" Name="Mapo Prosthetic Dental Clinic" BusinessType="DOC">
+      <Address Street1="55 Mapo-daero" City="Seoul" State="Seoul" PostalCode="04158" Country="KOR" />
+    </Originator>
+    <Catalogs>
+      <PatientCatalog>
+        <Patient UUID="p0000006-0006-0006-0006-000000000006" FirstName="Youngho" LastName="Cho" DateOfBirth="1955-12-03" Gender="M" />
+      </PatientCatalog>
+      <DentistCatalog>
+        <Dentist UUID="d0000006-0006-0006-0006-000000000006" FirstName="Haesook" LastName="Im" LicenseNumber="DEN-2001-2203" />
+      </DentistCatalog>
+      <OrderCatalog>
+        <Order UUID="o0000006-0006-0006-0006-000000000006"
+               PatientUUID="p0000006-0006-0006-0006-000000000006"
+               DentistUUID="d0000006-0006-0006-0006-000000000006"
+               DateUTCCreated="2026-04-05T12:30:00Z"
+               Priority="Normal">
+          <Restoration UUID="r0000006-0006-0006-0006-000000000001"
+                       ToothNumber="14"
+                       Type="RemovablePartialDentureFramework"
+                       Material="CobaltChrome"
+                       Shade="">
+            <DesignRequirements>
+              <KennedyClassification>Class II Mod 1</KennedyClassification>
+              <MissingTeeth>15,16,17,25</MissingTeeth>
+              <ClaspDesign>Akers clasp on 14, 24, 27</ClaspDesign>
+              <MajorConnector>Palatal Strap</MajorConnector>
+            </DesignRequirements>
+          </Restoration>
+          <DeliveryRequest DateUTCRequested="2026-04-19T09:00:00Z" DeliveryMethod="Physical" />
+          <OrderExtraInfo>
+            <LabNotes>Patient requires good retention. Metal framework try-in first, then acrylic teeth setup.</LabNotes>
+          </OrderExtraInfo>
+        </Order>
+      </OrderCatalog>
+      <FileCatalog>
+        <IDSFile UUID="f0000006-0006-0006-0006-000000000001" FileName="upper_arch_edentulous.stl" FileType="STL" FileSize="5500000" Description="Upper arch scan with rest seat preparations" />
+        <IDSFile UUID="f0000006-0006-0006-0006-000000000002" FileName="lower_arch_full.stl" FileType="STL" FileSize="4800000" Description="Lower arch full scan" />
+        <IDSFile UUID="f0000006-0006-0006-0006-000000000003" FileName="bite_registration.stl" FileType="STL" FileSize="1500000" Description="Centric relation bite registration" />
+      </FileCatalog>
+    </Catalogs>
+  </Submission>
+</IDS>

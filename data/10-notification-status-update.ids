@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<IDS IDSVersion="2.0" IDSUUID="a1b2c3d4-e5f6-7890-abcd-ef1234567810">
+  <IDSSource
+    HostName="lab-production-server"
+    IPAddress="10.50.0.100"
+    ApplicationName="LabProductionTracker"
+    SystemName="LabFlow"
+    SystemVersion="4.3.2" />
+  <IDSReplies>
+    <ReplyTo Address="https://lab.example.com/ids/status" AddressType="URL" />
+  </IDSReplies>
+  <!-- Notification: status update for a previously submitted order -->
+  <Notification UUID="nnnnnnnn-0001-0001-0001-000000000001"
+                DateUTCCreated="2026-04-09T15:30:00Z"
+                Type="StatusUpdate">
+    <ReferenceSubmission UUID="11111111-1111-1111-1111-111111111101" />
+    <ReferenceOrder UUID="o0000001-0001-0001-0001-000000000001" />
+    <StatusInfo>
+      <Status>InProduction</Status>
+      <PreviousStatus>DesignApproved</PreviousStatus>
+      <StatusDate>2026-04-09T15:30:00Z</StatusDate>
+      <EstimatedCompletion>2026-04-10T17:00:00Z</EstimatedCompletion>
+      <Message>Zirconia crown #16 milling completed. Sintering in progress. Expected shipping on schedule.</Message>
+    </StatusInfo>
+    <NotificationExtraInfo>
+      <ProductionDetails>
+        <Stage>Sintering</Stage>
+        <MillingMachine>DWX-52D</MillingMachine>
+        <SinteringOven>Programat S1 1600</SinteringOven>
+        <Operator>Lab Tech Kim</Operator>
+      </ProductionDetails>
+    </NotificationExtraInfo>
+  </Notification>
+  <!-- Notification: delivery dispatched -->
+  <Notification UUID="nnnnnnnn-0002-0002-0002-000000000002"
+                DateUTCCreated="2026-04-10T09:00:00Z"
+                Type="DeliveryUpdate">
+    <ReferenceSubmission UUID="22222222-2222-2222-2222-222222222202" />
+    <ReferenceOrder UUID="o0000002-0002-0002-0002-000000000002" />
+    <StatusInfo>
+      <Status>Shipped</Status>
+      <PreviousStatus>QualityCheckPassed</PreviousStatus>
+      <StatusDate>2026-04-10T09:00:00Z</StatusDate>
+      <EstimatedCompletion>2026-04-11T14:00:00Z</EstimatedCompletion>
+      <Message>3-unit bridge #35-37 shipped via express courier. Tracking number: KR1234567890.</Message>
+    </StatusInfo>
+    <DeliveryInfo>
+      <Carrier>Korea Express</Carrier>
+      <TrackingNumber>KR1234567890</TrackingNumber>
+      <ShipDate>2026-04-10T08:45:00Z</ShipDate>
+      <EstimatedDeliveryDate>2026-04-11T14:00:00Z</EstimatedDeliveryDate>
+    </DeliveryInfo>
+  </Notification>
+</IDS>
