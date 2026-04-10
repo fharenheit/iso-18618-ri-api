@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Submissions - ISO 18618 IDS{% endblock %}
+{% block content %}
+<h2 style="margin-bottom:1rem;">Submissions</h2>
+<div class="card">
+  <div class="card-body" style="padding:0;">
+    {% if submissions %}
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Submission UUID</th>
+          <th>IDS Version</th>
+          <th>Originator</th>
+          <th>Type</th>
+          <th>Orders</th>
+          <th>Files</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in submissions %}
+        <tr>
+          <td>{{ s.id }}</td>
+          <td><a href="/submissions/{{ s.submission_uuid }}">{{ s.submission_uuid }}</a></td>
+          <td>{{ s.ids_version }}</td>
+          <td>{{ s.originator.name if s.originator else 'Unknown' }}</td>
+          <td>
+            {% set bt = s.originator.business_type if s.originator else '' %}
+            {% if bt == 'DOC' %}<span class="badge badge-doc">DOC</span>
+            {% elif bt == 'LAB' %}<span class="badge badge-lab">LAB</span>
+            {% elif bt == 'SRV' %}<span class="badge badge-srv">SRV</span>
+            {% else %}<span class="badge badge-default">{{ bt or '-' }}</span>{% endif %}
+          </td>
+          <td>{{ s.orders | length }}</td>
+          <td>
+            {% set uploaded = s.uploaded_files | selectattr('is_uploaded') | list | length %}
+            {% set total = s.uploaded_files | length %}
+            {{ uploaded }} / {{ total }}
+          </td>
+          <td>{{ s.created_at.strftime('%Y-%m-%d %H:%M') if s.created_at else '-' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty">No submissions found.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

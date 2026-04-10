@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block title %}Submission {{ sub.submission_uuid[:16] }}... - ISO 18618 IDS{% endblock %}
+{% block content %}
+<p style="margin-bottom:0.5rem;"><a href="/submissions">&larr; Back to list</a></p>
+<h2 style="margin-bottom:1rem;">Submission Detail</h2>
+
+<!-- Summary -->
+<div class="card">
+  <div class="card-header">Summary</div>
+  <div class="card-body">
+    <dl class="detail-grid">
+      <dt>Submission UUID</dt><dd>{{ sub.submission_uuid }}</dd>
+      <dt>IDS UUID</dt><dd>{{ sub.ids_uuid }}</dd>
+      <dt>IDS Version</dt><dd>{{ sub.ids_version }}</dd>
+      <dt>Date Submitted</dt><dd>{{ sub.date_submitted.strftime('%Y-%m-%d %H:%M UTC') if sub.date_submitted else '-' }}</dd>
+      <dt>Created At</dt><dd>{{ sub.created_at.strftime('%Y-%m-%d %H:%M UTC') if sub.created_at else '-' }}</dd>
+    </dl>
+  </div>
+</div>
+
+<!-- Originator -->
+{% if sub.originator %}
+<div class="card">
+  <div class="card-header">Originator</div>
+  <div class="card-body">
+    <dl class="detail-grid">
+      <dt>Name</dt><dd>{{ sub.originator.name }}</dd>
+      <dt>Type</dt><dd>
+        {% set bt = sub.originator.business_type %}
+        {% if bt == 'DOC' %}<span class="badge badge-doc">DOC (Dentist)</span>
+        {% elif bt == 'LAB' %}<span class="badge badge-lab">LAB (Laboratory)</span>
+        {% elif bt == 'SRV' %}<span class="badge badge-srv">SRV (Broker)</span>
+        {% else %}<span class="badge badge-default">{{ bt or '-' }}</span>{% endif %}
+      </dd>
+      <dt>Address</dt>
+      <dd>{{ sub.originator.street1 or '' }} {{ sub.originator.street2 or '' }}<br>
+          {{ sub.originator.city or '' }} {{ sub.originator.state or '' }} {{ sub.originator.postal_code or '' }}<br>
+          {{ sub.originator.country or '' }}</dd>
+    </dl>
+  </div>
+</div>
+{% endif %}
+
+<!-- Tabs -->
+<div class="card">
+  <div class="card-body" style="padding-bottom:0;">
+    <div class="tabs">
+      <div class="tab active" data-tab="patients">Patients ({{ sub.patients | length }})</div>
+      <div class="tab" data-tab="dentists">Dentists ({{ sub.dentists | length }})</div>
+      <div class="tab" data-tab="orders">Orders ({{ sub.orders | length }})</div>
+      <div class="tab" data-tab="files">Files ({{ sub.uploaded_files | length }})</div>
+      <div class="tab" data-tab="xml">XML</div>
+    </div>
+  </div>
+
+  <!-- Patients -->
+  <div class="tab-content active" id="tab-patients">
+    {% if sub.patients %}
+    <table>
+      <thead><tr><th>UUID</th><th>Name</th><th>Date of Birth</th><th>Gender</th></tr></thead>
+      <tbody>
+        {% for p in sub.patients %}
+        <tr>
+          <td style="font-size:0.8rem;">{{ p.uuid }}</td>
+          <td>{{ p.last_name }} {{ p.first_name }}</td>
+          <td>{{ p.date_of_birth or '-' }}</td>
+          <td>{{ p.gender or '-' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}<div class="empty">No patient data.</div>{% endif %}
+  </div>
+
+  <!-- Dentists -->
+  <div class="tab-content" id="tab-dentists">
+    {% if sub.dentists %}
+    <table>
+      <thead><tr><th>UUID</th><th>Name</th><th>License #</th></tr></thead>
+      <tbody>
+        {% for d in sub.dentists %}
+        <tr>
+          <td style="font-size:0.8rem;">{{ d.uuid }}</td>
+          <td>{{ d.last_name }} {{ d.first_name }}</td>
+          <td>{{ d.license_number or '-' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}<div class="empty">No dentist data.</div>{% endif %}
+  </div>
+
+  <!-- Orders + Restorations -->
+  <div class="tab-content" id="tab-orders">
+    {% if sub.orders %}
+      {% for o in sub.orders %}
+      <div style="margin-bottom:1.5rem; padding:0 0.75rem;">
+        <h4 style="font-size:0.85rem; margin-bottom:0.5rem; color:#475569;">
+          Order: <span style="color:#1e293b;">{{ o.uuid }}</span>
+          {% if o.priority == 'High' %}<span class="badge badge-high">High</span>
+          {% elif o.priority %}<span class="badge badge-normal">{{ o.priority }}</span>{% endif %}
+        </h4>
+        <dl class="detail-grid" style="margin-bottom:0.75rem;">
+          <dt>Patient UUID</dt><dd style="font-size:0.8rem;">{{ o.patient_uuid or '-' }}</dd>
+          <dt>Dentist UUID</dt><dd style="font-size:0.8rem;">{{ o.dentist_uuid or '-' }}</dd>
+          <dt>Date Created</dt><dd>{{ o.date_created.strftime('%Y-%m-%d %H:%M') if o.date_created else '-' }}</dd>
+        </dl>
+        {% if o.restorations %}
+        <table>
+          <thead><tr><th>Tooth #</th><th>Type</th><th>Material</th><th>Shade</th></tr></thead>
+          <tbody>
+            {% for r in o.restorations %}
+            <tr>
+              <td>{{ r.tooth_number or '-' }}</td>
+              <td><strong>{{ r.type or '-' }}</strong></td>
+              <td>{{ r.material or '-' }}</td>
+              <td>{{ r.shade or '-' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+      </div>
+      {% endfor %}
+    {% else %}<div class="empty">No orders.</div>{% endif %}
+  </div>
+
+  <!-- Files -->
+  <div class="tab-content" id="tab-files">
+    {% if sub.uploaded_files %}
+    <table>
+      <thead><tr><th>File Name</th><th>Type</th><th>Size</th><th>Description</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for f in sub.uploaded_files %}
+        <tr>
+          <td>
+            {% if f.is_uploaded %}
+              <a href="/api/v1/submissions/{{ sub.submission_uuid }}/files/{{ f.file_name }}">{{ f.file_name }}</a>
+            {% else %}
+              {{ f.file_name }}
+            {% endif %}
+          </td>
+          <td>{{ f.file_type or '-' }}</td>
+          <td>{% if f.file_size %}{{ "%.1f"|format(f.file_size / 1024) }} KB{% else %}-{% endif %}</td>
+          <td>{{ f.description or '-' }}</td>
+          <td>
+            {% if f.is_uploaded %}<span class="badge badge-uploaded">Uploaded</span>
+            {% else %}<span class="badge badge-pending">Pending</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}<div class="empty">No files.</div>{% endif %}
+  </div>
+
+  <!-- XML -->
+  <div class="tab-content" id="tab-xml" style="padding:1rem;">
+    <pre class="xml-view">{{ sub.xml_content }}</pre>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+</script>
+{% endblock %}
