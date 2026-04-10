@@ -244,16 +244,42 @@ python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 ## Configuration
 
-Configuration is managed in `app/config.py` and can be overridden via environment variables:
+All settings are managed in `config.yaml` at the project root:
 
-| Setting | Default | Env Variable | Description |
-|---------|---------|-------------|-------------|
-| Database URL | `postgresql://ids_user:ids_pass@localhost:5432/ids_api` | `DATABASE_URL` | PostgreSQL connection string |
-| Storage Directory | `./storage/` | - | File upload storage path |
-| Max XML Size | 2 MB | - | ISO 18618 Clause 8 limit |
-| Max File Size | 100 MB | - | Per-file upload limit |
+```yaml
+server:
+  host: "0.0.0.0"
+  port: 8000
 
-Alembic uses the database URL from `alembic.ini`. Update both if changing the database connection.
+database:
+  host: "localhost"
+  port: 5432
+  name: "ids_api"
+  user: "ids_user"
+  password: "ids_pass"
+
+storage:
+  upload_dir: "/var/data/ids/uploads"   # absolute path for uploaded files
+
+upload:
+  max_xml_size_mb: 2     # ISO 18618 Clause 8 limit
+  max_file_size_mb: 100  # per-file upload limit
+```
+
+### Config Priority
+
+| Setting | YAML key | Env Variable Override |
+|---------|----------|----------------------|
+| Database URL | `database.*` | `DATABASE_URL` (full connection string) |
+| Config file path | - | `IDS_CONFIG` (path to YAML file) |
+| Storage directory | `storage.upload_dir` | - |
+| Max XML size | `upload.max_xml_size_mb` | - |
+| Max file size | `upload.max_file_size_mb` | - |
+
+- `DATABASE_URL` env var takes precedence over YAML `database.*` settings
+- `IDS_CONFIG` env var specifies an alternative YAML config path
+- If `config.yaml` is missing, built-in defaults are used
+- Alembic also reads the database URL from YAML (no need to edit `alembic.ini`)
 
 ## API Endpoints
 
