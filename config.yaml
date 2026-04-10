@@ -10,7 +10,7 @@ database:
   password: "ids_pass"
 
 storage:
-  upload_dir: "/var/data/ids/uploads"
+  upload_dir: "uploads"
 
 upload:
   max_xml_size_mb: 2
