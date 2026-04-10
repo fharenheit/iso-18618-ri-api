@@ -209,12 +209,14 @@ pip install -r requirements.txt
 
 ### 2. Create PostgreSQL Database and User
 
-```sql
-CREATE DATABASE ids_api;
-CREATE USER ids_user WITH PASSWORD 'ids_pass';
-GRANT ALL PRIVILEGES ON DATABASE ids_api TO ids_user;
--- Connect to ids_api database, then:
-GRANT ALL ON SCHEMA public TO ids_user;
+```bash
+# Run as postgres superuser
+psql -U postgres -c "CREATE DATABASE ids_api;"
+psql -U postgres -c "CREATE USER ids_user WITH PASSWORD 'ids_pass';"
+psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE ids_api TO ids_user;"
+
+# PostgreSQL 15+ requires explicit schema permission
+psql -U postgres -d ids_api -c "GRANT ALL ON SCHEMA public TO ids_user;"
 ```
 
 Or set a custom connection string via environment variable:
