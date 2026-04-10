@@ -1,13 +1,6 @@
-import shutil
 from pathlib import Path
 
 import pytest
-from fastapi.testclient import TestClient
-
-from app.config import STORAGE_DIR
-from app.main import app
-
-client = TestClient(app)
 
 SAMPLE_IDS_XML = b"""\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -37,34 +30,23 @@ SAMPLE_IDS_XML = b"""\
 </IDS>
 """
 
-SUBMISSION_ID = "sub-00000001-0001-0001-0001-000000000001"
+SUBMISSION_UUID = "sub-00000001-0001-0001-0001-000000000001"
 
 
-@pytest.fixture(autouse=True)
-def cleanup_storage():
-    """Clean up test submission data before and after each test."""
-    sub_dir = STORAGE_DIR / SUBMISSION_ID
-    if sub_dir.exists():
-        shutil.rmtree(sub_dir)
-    yield
-    if sub_dir.exists():
-        shutil.rmtree(sub_dir)
-
-
-def test_health():
+def test_health(client):
     resp = client.get("/health")
     assert resp.status_code == 200
     assert resp.json() == {"status": "ok"}
 
 
-def test_create_submission_xml_only():
+def test_create_submission_xml_only(client):
     resp = client.post(
         "/api/v1/submissions",
         files={"ids_xml": ("test.ids", SAMPLE_IDS_XML, "application/xml")},
     )
     assert resp.status_code == 201
     data = resp.json()
-    assert data["submission_id"] == SUBMISSION_ID
+    assert data["submission_id"] == SUBMISSION_UUID
     assert data["ids_uuid"] == "test-uuid-0001-0001-0001-000000000001"
     assert data["ids_version"] == "2.0"
     assert data["originator"]["name"] == "Test Dental Clinic"
@@ -74,15 +56,15 @@ def test_create_submission_xml_only():
     assert data["files_expected"] == 2
 
 
-def test_create_submission_with_files():
-    stl_content_1 = b"solid upper\nendsolid upper"
-    stl_content_2 = b"solid lower\nendsolid lower"
+def test_create_submission_with_files(client):
+    stl_1 = b"solid upper\nendsolid upper"
+    stl_2 = b"solid lower\nendsolid lower"
     resp = client.post(
         "/api/v1/submissions",
         files=[
             ("ids_xml", ("test.ids", SAMPLE_IDS_XML, "application/xml")),
-            ("files", ("upper_jaw.stl", stl_content_1, "application/octet-stream")),
-            ("files", ("lower_jaw.stl", stl_content_2, "application/octet-stream")),
+            ("files", ("upper_jaw.stl", stl_1, "application/octet-stream")),
+            ("files", ("lower_jaw.stl", stl_2, "application/octet-stream")),
         ],
     )
     assert resp.status_code == 201
@@ -91,7 +73,7 @@ def test_create_submission_with_files():
     assert data["files_expected"] == 2
 
 
-def test_create_submission_duplicate():
+def test_create_submission_duplicate(client):
     client.post(
         "/api/v1/submissions",
         files={"ids_xml": ("test.ids", SAMPLE_IDS_XML, "application/xml")},
@@ -103,7 +85,7 @@ def test_create_submission_duplicate():
     assert resp.status_code == 409
 
 
-def test_create_submission_invalid_xml():
+def test_create_submission_invalid_xml(client):
     resp = client.post(
         "/api/v1/submissions",
         files={"ids_xml": ("bad.ids", b"<not-ids/>", "application/xml")},
@@ -111,7 +93,7 @@ def test_create_submission_invalid_xml():
     assert resp.status_code == 422
 
 
-def test_create_submission_malformed_xml():
+def test_create_submission_malformed_xml(client):
     resp = client.post(
         "/api/v1/submissions",
         files={"ids_xml": ("bad.ids", b"not xml at all", "application/xml")},
@@ -119,7 +101,7 @@ def test_create_submission_malformed_xml():
     assert resp.status_code == 422
 
 
-def test_list_submissions():
+def test_list_submissions(client):
     client.post(
         "/api/v1/submissions",
         files={"ids_xml": ("test.ids", SAMPLE_IDS_XML, "application/xml")},
@@ -127,18 +109,18 @@ def test_list_submissions():
     resp = client.get("/api/v1/submissions")
     assert resp.status_code == 200
     items = resp.json()
-    assert any(s["submission_id"] == SUBMISSION_ID for s in items)
+    assert any(s["submission_id"] == SUBMISSION_UUID for s in items)
 
 
-def test_get_submission_detail():
+def test_get_submission_detail(client):
     client.post(
         "/api/v1/submissions",
         files={"ids_xml": ("test.ids", SAMPLE_IDS_XML, "application/xml")},
     )
-    resp = client.get(f"/api/v1/submissions/{SUBMISSION_ID}")
+    resp = client.get(f"/api/v1/submissions/{SUBMISSION_UUID}")
     assert resp.status_code == 200
     data = resp.json()
-    assert data["submission_id"] == SUBMISSION_ID
+    assert data["submission_id"] == SUBMISSION_UUID
     assert len(data["patients"]) == 1
     assert data["patients"][0]["first_name"] == "Minjun"
     assert len(data["dentists"]) == 1
@@ -148,22 +130,22 @@ def test_get_submission_detail():
     assert data["originator_address"]["city"] == "Seoul"
 
 
-def test_get_submission_not_found():
+def test_get_submission_not_found(client):
     resp = client.get("/api/v1/submissions/nonexistent-id")
     assert resp.status_code == 404
 
 
-def test_get_submission_xml():
+def test_get_submission_xml(client):
     client.post(
         "/api/v1/submissions",
         files={"ids_xml": ("test.ids", SAMPLE_IDS_XML, "application/xml")},
     )
-    resp = client.get(f"/api/v1/submissions/{SUBMISSION_ID}/xml")
+    resp = client.get(f"/api/v1/submissions/{SUBMISSION_UUID}/xml")
     assert resp.status_code == 200
     assert b"<IDS" in resp.content
 
 
-def test_list_and_download_files():
+def test_list_and_download_files(client):
     stl_data = b"solid test\nendsolid test"
     client.post(
         "/api/v1/submissions",
@@ -172,47 +154,45 @@ def test_list_and_download_files():
             ("files", ("upper_jaw.stl", stl_data, "application/octet-stream")),
         ],
     )
-    # List files
-    resp = client.get(f"/api/v1/submissions/{SUBMISSION_ID}/files")
+    resp = client.get(f"/api/v1/submissions/{SUBMISSION_UUID}/files")
     assert resp.status_code == 200
     file_list = resp.json()
     assert len(file_list) == 1
     assert file_list[0]["file_name"] == "upper_jaw.stl"
     assert file_list[0]["in_catalog"] is True
 
-    # Download file
-    resp = client.get(f"/api/v1/submissions/{SUBMISSION_ID}/files/upper_jaw.stl")
+    resp = client.get(f"/api/v1/submissions/{SUBMISSION_UUID}/files/upper_jaw.stl")
     assert resp.status_code == 200
     assert resp.content == stl_data
 
 
-def test_download_file_not_found():
+def test_download_file_not_found(client):
     client.post(
         "/api/v1/submissions",
         files={"ids_xml": ("test.ids", SAMPLE_IDS_XML, "application/xml")},
     )
-    resp = client.get(f"/api/v1/submissions/{SUBMISSION_ID}/files/nonexistent.stl")
+    resp = client.get(f"/api/v1/submissions/{SUBMISSION_UUID}/files/nonexistent.stl")
     assert resp.status_code == 404
 
 
-def test_delete_submission():
+def test_delete_submission(client):
     client.post(
         "/api/v1/submissions",
         files={"ids_xml": ("test.ids", SAMPLE_IDS_XML, "application/xml")},
     )
-    resp = client.delete(f"/api/v1/submissions/{SUBMISSION_ID}")
+    resp = client.delete(f"/api/v1/submissions/{SUBMISSION_UUID}")
     assert resp.status_code == 204
 
-    resp = client.get(f"/api/v1/submissions/{SUBMISSION_ID}")
+    resp = client.get(f"/api/v1/submissions/{SUBMISSION_UUID}")
     assert resp.status_code == 404
 
 
-def test_delete_submission_not_found():
+def test_delete_submission_not_found(client):
     resp = client.delete("/api/v1/submissions/nonexistent-id")
     assert resp.status_code == 404
 
 
-def test_xml_size_limit():
+def test_xml_size_limit(client):
     big_xml = b'<?xml version="1.0"?><IDS IDSVersion="2.0" IDSUUID="x">' + b"x" * (2 * 1024 * 1024) + b"</IDS>"
     resp = client.post(
         "/api/v1/submissions",
@@ -221,36 +201,58 @@ def test_xml_size_limit():
     assert resp.status_code == 413
 
 
-def test_create_with_sample_data_file():
+def test_create_with_sample_data_file(client):
     """Test with an actual sample IDS file from the data directory."""
     sample_path = Path(__file__).resolve().parent.parent / "data" / "01-single-crown.ids"
     if not sample_path.exists():
         pytest.skip("Sample data file not found")
 
     xml_bytes = sample_path.read_bytes()
+    resp = client.post(
+        "/api/v1/submissions",
+        files=[
+            ("ids_xml", ("01-single-crown.ids", xml_bytes, "application/xml")),
+            ("files", ("upper_jaw_scan.stl", b"stl binary data", "application/octet-stream")),
+        ],
+    )
+    assert resp.status_code == 201
+    data = resp.json()
+    assert data["originator"]["name"] == "Seoul Dental Clinic"
+    assert data["orders_count"] == 1
+    assert data["files_uploaded"] == 1
+    assert data["files_expected"] == 3
 
-    # Use a unique cleanup for this test
-    from app.services.xml_parser import parse_ids_xml
-    parsed = parse_ids_xml(xml_bytes)
-    real_sub_id = parsed["submission"]["uuid"]
-    real_sub_dir = STORAGE_DIR / real_sub_id
-    if real_sub_dir.exists():
-        shutil.rmtree(real_sub_dir)
 
-    try:
-        resp = client.post(
-            "/api/v1/submissions",
-            files=[
-                ("ids_xml", ("01-single-crown.ids", xml_bytes, "application/xml")),
-                ("files", ("upper_jaw_scan.stl", b"stl binary data", "application/octet-stream")),
-            ],
-        )
-        assert resp.status_code == 201
-        data = resp.json()
-        assert data["originator"]["name"] == "Seoul Dental Clinic"
-        assert data["orders_count"] == 1
-        assert data["files_uploaded"] == 1
-        assert data["files_expected"] == 3
-    finally:
-        if real_sub_dir.exists():
-            shutil.rmtree(real_sub_dir)
+# === View tests ===
+
+def test_dashboard_page(client):
+    resp = client.get("/")
+    assert resp.status_code == 200
+    assert "Dashboard" in resp.text
+
+
+def test_submissions_page(client):
+    client.post(
+        "/api/v1/submissions",
+        files={"ids_xml": ("test.ids", SAMPLE_IDS_XML, "application/xml")},
+    )
+    resp = client.get("/submissions")
+    assert resp.status_code == 200
+    assert "Test Dental Clinic" in resp.text
+
+
+def test_submission_detail_page(client):
+    client.post(
+        "/api/v1/submissions",
+        files={"ids_xml": ("test.ids", SAMPLE_IDS_XML, "application/xml")},
+    )
+    resp = client.get(f"/submissions/{SUBMISSION_UUID}")
+    assert resp.status_code == 200
+    assert "Test Dental Clinic" in resp.text
+    assert "Minjun" in resp.text
+    assert "Crown" in resp.text
+
+
+def test_submission_detail_page_not_found(client):
+    resp = client.get("/submissions/nonexistent-id")
+    assert resp.status_code == 404

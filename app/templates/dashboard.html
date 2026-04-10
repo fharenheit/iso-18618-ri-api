@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - ISO 18618 IDS{% endblock %}
+{% block content %}
+<h2 style="margin-bottom:1rem;">Dashboard</h2>
+<div class="stats">
+  <div class="stat-card">
+    <div class="label">Total Submissions</div>
+    <div class="value">{{ stats.total_submissions }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Total Orders</div>
+    <div class="value">{{ stats.total_orders }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Total Restorations</div>
+    <div class="value">{{ stats.total_restorations }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Files (Uploaded / Total)</div>
+    <div class="value">{{ stats.files_uploaded }} / {{ stats.total_files }}</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">Recent Submissions</div>
+  <div class="card-body" style="padding:0;">
+    {% if recent %}
+    <table>
+      <thead>
+        <tr>
+          <th>Submission UUID</th>
+          <th>Originator</th>
+          <th>Type</th>
+          <th>Orders</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in recent %}
+        <tr>
+          <td><a href="/submissions/{{ s.submission_uuid }}">{{ s.submission_uuid[:20] }}...</a></td>
+          <td>{{ s.originator.name if s.originator else 'Unknown' }}</td>
+          <td>
+            {% set bt = s.originator.business_type if s.originator else '' %}
+            {% if bt == 'DOC' %}<span class="badge badge-doc">DOC</span>
+            {% elif bt == 'LAB' %}<span class="badge badge-lab">LAB</span>
+            {% elif bt == 'SRV' %}<span class="badge badge-srv">SRV</span>
+            {% else %}<span class="badge badge-default">{{ bt or '-' }}</span>{% endif %}
+          </td>
+          <td>{{ s.orders | length }}</td>
+          <td>{{ s.created_at.strftime('%Y-%m-%d %H:%M') if s.created_at else '-' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty">No submissions yet. Upload an IDS XML via the API.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
