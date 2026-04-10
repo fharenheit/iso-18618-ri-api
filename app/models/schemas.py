@@ -1,60 +1,64 @@
+from __future__ import annotations
+
 from datetime import datetime
+from typing import Optional, List
+
 from pydantic import BaseModel
 
 
 class OriginatorInfo(BaseModel):
     uuid: str
     name: str
-    business_type: str | None = None
+    business_type: Optional[str] = None
 
 
 class AddressInfo(BaseModel):
-    street1: str | None = None
-    street2: str | None = None
-    city: str | None = None
-    state: str | None = None
-    postal_code: str | None = None
-    country: str | None = None
+    street1: Optional[str] = None
+    street2: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    postal_code: Optional[str] = None
+    country: Optional[str] = None
 
 
 class PatientInfo(BaseModel):
     uuid: str
-    first_name: str | None = None
-    last_name: str | None = None
-    date_of_birth: str | None = None
-    gender: str | None = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    date_of_birth: Optional[str] = None
+    gender: Optional[str] = None
 
 
 class DentistInfo(BaseModel):
     uuid: str
-    first_name: str | None = None
-    last_name: str | None = None
-    license_number: str | None = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    license_number: Optional[str] = None
 
 
 class RestorationInfo(BaseModel):
     uuid: str
-    tooth_number: str | None = None
-    type: str | None = None
-    material: str | None = None
-    shade: str | None = None
+    tooth_number: Optional[str] = None
+    type: Optional[str] = None
+    material: Optional[str] = None
+    shade: Optional[str] = None
 
 
 class OrderInfo(BaseModel):
     uuid: str
-    patient_uuid: str | None = None
-    dentist_uuid: str | None = None
-    priority: str | None = None
-    date_created: str | None = None
-    restorations: list[RestorationInfo] = []
+    patient_uuid: Optional[str] = None
+    dentist_uuid: Optional[str] = None
+    priority: Optional[str] = None
+    date_created: Optional[str] = None
+    restorations: List[RestorationInfo] = []
 
 
 class FileInfo(BaseModel):
     uuid: str
     file_name: str
-    file_type: str | None = None
-    file_size: str | None = None
-    description: str | None = None
+    file_type: Optional[str] = None
+    file_size: Optional[str] = None
+    description: Optional[str] = None
 
 
 class SubmissionSummary(BaseModel):
@@ -73,12 +77,12 @@ class SubmissionDetail(BaseModel):
     ids_uuid: str
     ids_version: str
     originator: OriginatorInfo
-    originator_address: AddressInfo | None = None
-    patients: list[PatientInfo] = []
-    dentists: list[DentistInfo] = []
-    orders: list[OrderInfo] = []
-    files_expected: list[FileInfo] = []
-    files_uploaded: list[str] = []
+    originator_address: Optional[AddressInfo] = None
+    patients: List[PatientInfo] = []
+    dentists: List[DentistInfo] = []
+    orders: List[OrderInfo] = []
+    files_expected: List[FileInfo] = []
+    files_uploaded: List[str] = []
     created_at: datetime
 
 
