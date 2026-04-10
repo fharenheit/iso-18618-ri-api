@@ -226,7 +226,7 @@ export DATABASE_URL="postgresql://user:password@host:5432/dbname"
 ### 3. Run Database Migrations
 
 ```bash
-alembic upgrade head
+python -m alembic upgrade head
 ```
 
 This creates all 7 tables in the database.
@@ -234,7 +234,7 @@ This creates all 7 tables in the database.
 ### 4. Run the Application
 
 ```bash
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 - Web UI: http://localhost:8000
