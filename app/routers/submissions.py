@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
@@ -5,6 +6,8 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from app.config import MAX_XML_SIZE
+
+logger = logging.getLogger("ids.api.submissions")
 from app.database import get_db
 from app.models.schemas import (
     FileListItem,
@@ -32,28 +35,38 @@ async def create_submission(
     db: Session = Depends(get_db),
 ):
     """Upload an IDS XML document with optional attached files."""
+    logger.info("Receiving submission: xml=%s, attached_files=%d", ids_xml.filename, len(files))
+
     xml_bytes = await ids_xml.read()
+    logger.debug("XML size: %d bytes", len(xml_bytes))
     if len(xml_bytes) > MAX_XML_SIZE:
+        logger.warning("XML size %d exceeds 2MB limit", len(xml_bytes))
         raise HTTPException(status_code=413, detail="IDS XML exceeds 2MB limit (ISO 18618 Clause 8)")
 
     try:
         parsed = parse_ids_xml(xml_bytes)
     except IDSParseError as e:
+        logger.warning("XML parse error: %s", e)
         raise HTTPException(status_code=422, detail=str(e))
 
     submission_data = parsed.get("submission")
     if not submission_data:
+        logger.warning("No <Submission> element found in IDS document")
         raise HTTPException(status_code=422, detail="IDS document must contain a <Submission> element")
 
     submission_uuid = submission_data["uuid"]
     if not submission_uuid:
         raise HTTPException(status_code=422, detail="Submission UUID is required")
 
+    logger.info("Processing submission: uuid=%s, ids_version=%s", submission_uuid, parsed["ids_version"])
+
     if submission_service.get_submission_by_uuid(db, submission_uuid):
+        logger.warning("Duplicate submission: %s", submission_uuid)
         raise HTTPException(status_code=409, detail=f"Submission {submission_uuid} already exists")
 
     # Save to DB
     sub = submission_service.create_submission(db, parsed, xml_bytes.decode("utf-8"))
+    logger.info("Submission saved to DB: id=%d, uuid=%s", sub.id, submission_uuid)
 
     # Save files to disk and mark in DB
     storage.save_submission(submission_uuid, xml_bytes, parsed)
@@ -64,6 +77,7 @@ async def create_submission(
             file_path = storage.save_file(submission_uuid, f.filename, content)
             submission_service.mark_file_uploaded(db, sub.id, f.filename, str(file_path), len(content))
             files_uploaded += 1
+            logger.info("File uploaded: %s (%d bytes) -> %s", f.filename, len(content), file_path)
 
     originator = OriginatorInfo(uuid="", name="Unknown")
     if sub.originator:
@@ -74,6 +88,11 @@ async def create_submission(
         )
 
     expected_count = len(submission_data.get("files", []))
+
+    logger.info(
+        "Submission complete: uuid=%s, originator=%s, orders=%d, files=%d/%d",
+        submission_uuid, originator.name, len(sub.orders), files_uploaded, expected_count,
+    )
 
     return SubmissionSummary(
         submission_id=submission_uuid,
@@ -226,3 +245,4 @@ async def delete_submission(submission_id: str, db: Session = Depends(get_db)):
     if not submission_service.delete_submission(db, submission_id):
         raise HTTPException(status_code=404, detail="Submission not found")
     storage.delete_submission(submission_id)
+    logger.info("Submission deleted: %s", submission_id)

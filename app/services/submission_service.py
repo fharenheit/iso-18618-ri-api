@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import logging
 from datetime import date, datetime
 from typing import Optional
 
 from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload, subqueryload
+
+logger = logging.getLogger("ids.service.submission")
 
 from app.models.db_models import (
     Dentist,
@@ -24,6 +27,7 @@ def create_submission(
 ) -> Submission:
     """Create a Submission and all related records from parsed IDS XML."""
     sub_data = parsed["submission"]
+    logger.debug("Creating submission record: uuid=%s", sub_data["uuid"])
 
     submission = Submission(
         ids_uuid=parsed["ids_uuid"],
@@ -118,6 +122,15 @@ def create_submission(
 
     db.commit()
     db.refresh(submission)
+    logger.info(
+        "Created submission id=%d: originator=%s, patients=%d, dentists=%d, orders=%d, files=%d",
+        submission.id,
+        sub_data.get("originator", {}).get("info", {}).get("name", "N/A") if isinstance(sub_data.get("originator", {}).get("info"), dict) else getattr(sub_data.get("originator", {}).get("info"), "name", "N/A"),
+        len(sub_data.get("patients", [])),
+        len(sub_data.get("dentists", [])),
+        len(sub_data.get("orders", [])),
+        len(sub_data.get("files", [])),
+    )
     return submission
 
 
@@ -181,9 +194,11 @@ def count_submissions(db: Session) -> int:
 def delete_submission(db: Session, submission_uuid: str) -> bool:
     sub = db.query(Submission).filter(Submission.submission_uuid == submission_uuid).first()
     if not sub:
+        logger.warning("Delete failed: submission %s not found", submission_uuid)
         return False
     db.delete(sub)
     db.commit()
+    logger.info("Deleted submission from DB: id=%d, uuid=%s", sub.id, submission_uuid)
     return True
 
 

@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import json
+import logging
 import shutil
 from datetime import datetime, timezone
 from pathlib import Path
 
 from app.config import STORAGE_DIR
+
+logger = logging.getLogger("ids.storage")
 
 
 def _submission_dir(submission_id: str) -> Path:
@@ -21,6 +24,7 @@ def save_submission(submission_id: str, xml_bytes: bytes, parsed: dict) -> Path:
 
     # Save original XML
     (sub_dir / "document.ids").write_bytes(xml_bytes)
+    logger.info("Saved IDS XML to %s (%d bytes)", sub_dir / "document.ids", len(xml_bytes))
 
     # Save parsed metadata
     metadata = {
@@ -44,6 +48,7 @@ def save_file(submission_id: str, filename: str, content: bytes) -> Path:
     files_dir.mkdir(parents=True, exist_ok=True)
     file_path = files_dir / safe_name
     file_path.write_bytes(content)
+    logger.debug("Saved file: %s (%d bytes)", file_path, len(content))
     return file_path
 
 
@@ -94,6 +99,7 @@ def delete_submission(submission_id: str) -> bool:
     if not sub_dir.exists():
         return False
     shutil.rmtree(sub_dir)
+    logger.info("Deleted submission directory: %s", sub_dir)
     return True
 
 
